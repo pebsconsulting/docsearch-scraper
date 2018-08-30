@@ -17,3 +17,5 @@ geckodriver.log
 
 configs/public
 configs/private
+
+GOOGLE_APPLICATION_CREDENTIALS*
