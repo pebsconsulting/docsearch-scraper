@@ -1,9 +1,11 @@
 # Imports the Google Cloud client library
 from google.cloud import pubsub_v1
+from google.api_core import exceptions
 from dotenv import load_dotenv
 import os
 import time
-import itertools
+
+
 
 
 def callback(message):
@@ -14,15 +16,6 @@ def callback(message):
             value = message.attributes.get(key)
             print('{}: {}'.format(key, value))
     message.ack()
-
-
-def isEmpty(iterable):
-    my_iter = itertools.islice(iterable, 0)
-    try:
-        my_iter.next()
-    except StopIteration:
-        return True
-    return False
 
 
 subscription_name = 'regular_consumer'
@@ -45,12 +38,14 @@ subscription_path = subscriber.subscription_path(
     GOOGLE_CLOUD_PROJECT_ID, subscription_name)
 
 # We have no warning if we subscribe to a subscription not created. Manual check
-if isEmpty(publisher.list_topic_subscriptions(topic_path)):
-    print('No subscription to the topic  {}, we will create one'.format(topic_path))
-
-    subscription = subscriber.create_subscription(
+try:
+    subscriber.create_subscription(
         subscription_path, topic_path)
-    print('Subscription created: {}'.format(subscription))
+except exceptions.AlreadyExists:
+    print('Subscription {} already exist, no need to create'.format(subscription_path))
+else:
+    print('Subscription {} created, note that it will not be related to the previous one'.format(subscription_path))
+
 
 subscriber.subscribe(subscription_path, callback=callback)
 
