@@ -48,8 +48,9 @@ check_output(['git', 'pull', '-r', 'origin', 'master'], cwd=config_deployed_fold
 
 # Iterating through these configurations
 
-for configuration_filename in os.listdir(config_deployed_folder):
-    if '.json' in configuration_filename:
+# for configuration_filename in os.listdir(config_deployed_folder):
+for index, configuration_filename in enumerate(os.listdir(config_deployed_folder), start=0):
+    if '.json' in configuration_filename and index < 2:
         with open(os.path.join(config_deployed_folder, configuration_filename)) as c:
             configuration = json.load(c)
             message_future = publisher.publish(topic_path, json.dumps(configuration, indent=2, separators=(',', ': ')),
