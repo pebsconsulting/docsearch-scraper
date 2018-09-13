@@ -17,4 +17,4 @@ class BuildDockerScraper(AbstractBuildDocker):
         code = self.build_docker_file("scraper/dev/docker/Dockerfile.dev", python3=py3)
         if code != 0:
             return code
-        return self.build_docker_file("scraper/dev/docker/Dockerfile", "algolia/documentation-scrapper", py3)
+        return self.build_docker_file("scraper/dev/docker/Dockerfile", "sylvainpace/docsearch-scrapper", py3)

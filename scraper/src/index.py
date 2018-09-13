@@ -92,5 +92,17 @@ def run_config(config):
 
 if __name__ == '__main__':
     from os import environ
+    import requests
 
-    run_config(environ['CONFIG'])
+    conf = environ.get('CONFIG', None)
+    url = 'https://api.github.com/repos/algolia/docsearch-configs/contents/configs/' + conf + '.json'
+    headers = {'Accept': 'application/vnd.github.VERSION.raw'}
+    raw_content_response = requests.get(url, headers=headers)
+    nb_request_remaining = raw_content_response.headers["X-RateLimit-Remaining"]
+    ratelimit_reset = raw_content_response.headers["X-RateLimit-Reset"]
+    print('\nOnly {} request(s) remaining to GitHub'.format(nb_request_remaining))
+    print('\nRate-limit will be reset at {}'.format(ratelimit_reset))
+
+    config = raw_content_response.text
+
+    run_config(config)
